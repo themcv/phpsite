@@ -306,12 +306,16 @@ class SimpleCMS
                         'id' => 'title',
                         'type' => 'text',
                         'maxlength' => '150',
-                        'value' => $_POST['title']
+                        'value' => self::sanitizeItems(
+                            $_POST['title']
+                        )
                     )
                 ),
                 self::tag(
                     'textarea',
-                    $_POST['bodytext'],
+                    self::sanitizeItems(
+                        $_POST['bodytext']
+                    ),
                     array(
                         'name' => 'bodytext',
                         'id' => 'bodytext',
@@ -356,8 +360,12 @@ class SimpleCMS
         foreach ((array)$attributes as $item => &$val) {
             $atts[] = sprintf(
                 '%s="%s"',
-                $item,
-                $val
+                self::sanitizeItems(
+                    $item
+                ),
+                self::sanitizeItems(
+                    $val
+                )
             );
             unset($val);
         }

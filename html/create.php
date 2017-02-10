@@ -36,9 +36,7 @@ $body = SimpleCMS::tag(
  *
  * To think about, however, is a simpler means to include tags maybe.
  */
-echo SimpleCMS::sanitizeItems(
-    SimpleCMS::tag(
-        'html',
-        $body
-    )
+echo SimpleCMS::tag(
+    'html',
+    $body
 );

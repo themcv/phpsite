@@ -13,10 +13,10 @@
 7. Create config.inc.php
 `cp /var/www/html/phpsite/config{-example,}.inc.php`
 8. Edit the config.inc.php to suit your needs.
-* DB_NAME = The name of the database: our example is testDB.
-* DB_TYPE = The type of db, for most will be mysql.
-* DB_HOST = The host of the database, for most will be localhost.
-* DB_USER = The user to connect to the database with.
-* DB_PASS = The pass for the user to connect to the databse.
+8. * DB_NAME = The name of the database: our example is testDB.
+8. * DB_TYPE = The type of db, for most will be mysql.
+8. * DB_HOST = The host of the database, for most will be localhost.
+8. * DB_USER = The user to connect to the database with.
+8. * DB_PASS = The pass for the user to connect to the databse.
 9. Visit your page. URL will be http://<yourserverip>/phpsite/index.php
 10. Revel in the success!

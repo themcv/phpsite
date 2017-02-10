@@ -208,10 +208,10 @@ class simpleCMS {
         self::_execute();
         ob_start();
         $count = 0;
-        while ($row = self::$_queryResult->fetchAll()) {
+        while ($row = self::$_queryResult->fetch()) {
             $count++;
             foreach ((array)$row as $key => &$val) {
-                self::_sanitizeItems($row[$key]);
+                self::sanitizeItems($row[$key]);
                 unset($val);
             }
             /**
@@ -249,7 +249,7 @@ class simpleCMS {
                     'a',
                     _('Add a new entry'),
                     array(
-                        'href' => $_SERVER['PHP_SELF']
+                        'href' => dirname($_SERVER['PHP_SELF']).'/create.php'
                     )
                 ),
                 array(
@@ -265,6 +265,11 @@ class simpleCMS {
      * @return string
      */
     public function displayAdmin() {
+        if (isset($_POST['submit'])) {
+            $this->write();
+            header('Location: ./index.php');
+            exit;
+        }
         return self::tag(
             'form',
             sprintf(
@@ -365,7 +370,7 @@ class simpleCMS {
      *
      * @return string
      */
-    private static function _sanitizeItems($string)
+    public static function sanitizeItems($string)
     {
         $string = htmlspecialchars(
             $string,
@@ -377,11 +382,9 @@ class simpleCMS {
     /**
      * Writes the new entry to the database for us.
      *
-     * @param array $p The data to insert.
-     *
      * @return bool
      */
-    public function write($p) {
+    public function write() {
         /**
          * If the form hasn't been submitted or using bad
          * items we should return without entering anything.
@@ -392,7 +395,14 @@ class simpleCMS {
         /**
          * Just so we can limit potential syntactical errors.
          */
-        extract($p);
+        if (!(isset($_POST['title']) && is_string($_POST['title']))) {
+            $_POST['title'] = false;
+        }
+        $title = $_POST['title'];
+        if (!(isset($_POST['bodytext']) && is_string($_POST['bodytext']))) {
+            $_POST['bodytext'] = false;
+        }
+        $bodytext = $_POST['bodytext'];
         /**
          * Initialize these for our prepares
          */

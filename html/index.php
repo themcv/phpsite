@@ -20,35 +20,12 @@
  * @link    https://github.com/themcv/phpsite
  */
 /**
- * We need to pull in the configuration file.
+ * Common entry point.
  */
-define('BASEPATH', dirname(__FILE__));
-if (!file_exists(BASEPATH.DIRECTORY_SEPARATOR.'config.inc.php')) {
-    printf(
-        '%s. %s. %s: %s%s%s %s: %s%s%s',
-        _('Configuration has not been setup'),
-        _('You need to create your config.inc.php'),
-        _('This can be done by editing'),
-        BASEPATH,
-        DIRECTORY_SEPARATOR,
-        'config.inc.php',
-        _('An example config file can be found at'),
-        BASEPATH,
-        DIRECTORY_SEPARATOR,
-        'config-example.inc.php'
-    );
-    exit;
-}
-require 'config.inc.php';
+require dirname(__FILE__).DIRECTORY_SEPARATOR.'base.inc.php';
 /**
- * Because you have to start somewhere, we must include our class first.
- * In more complex setups you would want an "autoloader".
+ * Initial body information.
  */
-require 'simpleCMS.php';
-/**
- * Instantiate the simple cms class.
- */
-$SimpleCMS = new SimpleCMS();
 $body = SimpleCMS::tag(
     'body',
     $SimpleCMS->displayPublic()

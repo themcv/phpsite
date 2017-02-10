@@ -23,7 +23,8 @@
  * @license  linktolicense ????SimpleNameOfLicenses
  * @link     https://github.com/themcv/phpsite
  */
-class simpleCMS {
+class SimpleCMS
+{
     const ZERO_DATA = 0;
     /**
      * The table to work within.
@@ -140,6 +141,8 @@ class simpleCMS {
     /**
      * Prepares the query.
      *
+     * @param string $query The query to prepare.
+     *
      * @return void
      */
     private static function _prepare($query)
@@ -199,7 +202,8 @@ class simpleCMS {
      *
      * @return void
      */
-    public function displayPublic() {
+    public function displayPublic()
+    {
         $query = sprintf(
             'SELECT * FROM `%s` ORDER BY `created` DESC LIMIT 3',
             self::$table
@@ -211,7 +215,7 @@ class simpleCMS {
         while ($row = self::$_queryResult->fetch()) {
             $count++;
             foreach ((array)$row as $key => &$val) {
-                self::sanitizeItems($row[$key]);
+                $row[$key] = self::sanitizeItems($row[$key]);
                 unset($val);
             }
             /**
@@ -238,9 +242,10 @@ class simpleCMS {
             echo self::tag(
                 'p',
                 sprintf(
-                    '%s. %s!',
+                    '%s. %s %s!',
                     _('No entries have been made on this page'),
-                    _('Please check back soon or click the link below to add an entry')
+                    _('Please check back soon or click the link'),
+                    _('below to add an entry')
                 )
             );
             echo self::tag(
@@ -264,7 +269,8 @@ class simpleCMS {
      *
      * @return string
      */
-    public function displayAdmin() {
+    public function displayAdmin()
+    {
         if (isset($_POST['submit'])) {
             $this->write();
             header('Location: ./index.php');
@@ -370,7 +376,7 @@ class simpleCMS {
      *
      * @return string
      */
-    public static function sanitizeItems($string)
+    public static function sanitizeItems(&$string)
     {
         $string = htmlspecialchars(
             $string,
@@ -384,7 +390,8 @@ class simpleCMS {
      *
      * @return bool
      */
-    public function write() {
+    public function write()
+    {
         /**
          * If the form hasn't been submitted or using bad
          * items we should return without entering anything.

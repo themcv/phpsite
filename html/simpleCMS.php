@@ -24,45 +24,7 @@
  * @link     https://github.com/themcv/phpsite
  */
 class simpleCMS {
-    /**
-     * Recommend to use typical OOP based property assignments.
-     *
-     * These include public, private, and protected.
-     * var will just make the variables public. Scopes you should
-     * learn from the docs.
-     *
-     * const is also valid for "constant" properties.
-     */
-    /**
-     * DB name to work from.
-     *
-     * @var string
-     */
-    const DB_NAME = 'testDB';
-    /**
-     * DB Connector (e.g. mysql, oracle, etc...)
-     *
-     * @var string
-     */
-    const DB_TYPE = 'mysql';
-    /**
-     * DB host to connect to.
-     *
-     * @var string
-     */
-    const DB_HOST = 'localhost';
-    /**
-     * DB user to connect with.
-     *
-     * @var string
-     */
-    const DB_USER = 'root';
-    /**
-     * DB password to use.
-     *
-     * @var string
-     */
-    const DB_PASS = '';
+    const ZERO_DATA = 0;
     /**
      * The table to work within.
      *
@@ -105,7 +67,7 @@ class simpleCMS {
         if (count($options) > 0) {
             self::$_options += $options;
         }
-        if (self::$_link) {
+        if (!self::$_link) {
             self::_connectDb();
         }
         if (!self::$_link) {
@@ -119,11 +81,11 @@ class simpleCMS {
      */
     private static function _connectDb()
     {
-        $type = self::DB_TYPE;
-        $name = self::DB_NAME;
-        $host = self::DB_HOST;
-        $user = self::DB_USER;
-        $pass = self::DB_PASS;
+        $type = DB_TYPE;
+        $name = DB_NAME;
+        $host = DB_HOST;
+        $user = DB_USER;
+        $pass = DB_PASS;
         $dsn = sprintf(
             '%s:host=%s;dbname=%s;charset=utf8',
             $type,
@@ -144,17 +106,35 @@ class simpleCMS {
                 $dsn,
                 $user,
                 $pass,
-                self::$options
+                self::$_options
             );
         } catch (PDOException $e) {
-            $msg = sprintf(
-                '%s %s: %s: %s',
-                _('Failed to'),
-                __FUNCTION__,
-                _('Error'),
-                $e->getMessage()
+            $dsn = str_replace(
+                sprintf(
+                    'dbname=%s;',
+                    $name
+                ),
+                '',
+                $dsn
             );
-            die($msg);
+            try {
+                self::$_link = new PDO(
+                    $dsn,
+                    $user,
+                    $pass,
+                    self::$_options
+                );
+                self::_buildDB();
+            } catch (PDOException $evt) {
+                $msg = sprintf(
+                    '%s %s: %s: %s',
+                    _('Failed to'),
+                    __FUNCTION__,
+                    _('Error'),
+                    $evt->getMessage()
+                );
+                die($msg);
+            }
         }
     }
     /**
@@ -226,36 +206,31 @@ class simpleCMS {
         );
         self::_prepare($query);
         self::_execute();
-        if (is_bool(self::$_queryResult)) {
-            $result = self::$_queryResult;
-            $numrows = 0;
-        } else {
-            $numrows = (int)self::$_queryResult->columnCount();
-        }
         ob_start();
-        if ($numrows > 0) {
-            while ($row = self::$_queryResult->fetchAll()) {
-                foreach ((array)$row as $key => &$val) {
-                    self::_sanitizeItems($row[$key]);
-                    unset($val);
-                }
-                /**
-                 * Extracts data in an unpacking form.
-                 * For example:
-                 * row['title'] will have variable set as:
-                 * $title = $row['title']
-                 */
-                extract($row);
-                echo self::tag(
-                    'h2',
-                    $title
-                );
-                echo self::tag(
-                    'p',
-                    $bodytext
-                );
+        $count = 0;
+        while ($row = self::$_queryResult->fetchAll()) {
+            $count++;
+            foreach ((array)$row as $key => &$val) {
+                self::_sanitizeItems($row[$key]);
+                unset($val);
             }
-        } else {
+            /**
+             * Extracts data in an unpacking form.
+             * For example:
+             * row['title'] will have variable set as:
+             * $title = $row['title']
+             */
+            extract($row);
+            echo self::tag(
+                'h2',
+                $title
+            );
+            echo self::tag(
+                'p',
+                $bodytext
+            );
+        }
+        if (self::ZERO_DATA === $count) {
             echo self::tag(
                 'h2',
                 _('Page under construction')
@@ -378,7 +353,8 @@ class simpleCMS {
                 ) :
                 ''
             ),
-            $string
+            $string,
+            $tag
         );
         return $htmltag;
     }
@@ -476,16 +452,18 @@ class simpleCMS {
     private static function _buildDB()
     {
         $query = 'CREATE DATABASE IF NOT EXISTS `%s`';
-        self::_prepare(
+        $test = self::_prepare(
             sprintf(
                 $query,
                 self::DB_NAME
             )
         );
-        $test = self::_execute();
-        if (!$test) {
+        if (false === $test) {
             return false;
         }
+        self::_execute();
+        self::$_link = null;
+        self::_connectDb();
         $query = 'CREATE TABLE IF NOT EXISTS `%s` ('
             . '`id` INTEGER NOT NULL AUTO_INCREMENT,'
             . '`title` VARCHAR(150) NOT NULL,'
@@ -495,12 +473,16 @@ class simpleCMS {
             . 'UNIQUE INDEX `title` (`title`)'
             . ') ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 '
             . 'ROW_FORMAT=DYNAMIC';
-        self::_prepare(
+        $test = self::_prepare(
             sprintf(
                 $query,
                 self::$table
             )
         );
-        return self::_execute();
+        if (false === $test) {
+            return false;
+        }
+        self::_execute();
+        return true;
     }
 }

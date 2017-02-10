@@ -4,25 +4,29 @@
  *
  * PHP version 5
  *
- * category Index
- * package  SimpleCMS
- * author   THEMCV <nah@nah.com>
- * @license linktolicense Simplenameforlicense
- * @link    https://github.com/themcv/phpsite
+ * @category Index
+ * @package  SimpleCMS
+ * @author   THEMCV <nah@nah.com>
+ * @license  linktolicense Simplenameforlicense
+ * @link     https://github.com/themcv/phpsite
  */
 /**
  * The index referenced.
  *
- * category Index
- * package  SimpleCMS
- * author   THEMCV <nah@nah.com>
- * @license linktolicense Simplenameforlicense
- * @link    https://github.com/themcv/phpsite
+ * @category Index
+ * @package  SimpleCMS
+ * @author   THEMCV <nah@nah.com>
+ * @license  linktolicense Simplenameforlicense
+ * @link     https://github.com/themcv/phpsite
  */
 /**
  * Common entry point.
  */
-require dirname(__FILE__).DIRECTORY_SEPARATOR.'base.inc.php';
+require sprintf(
+    '%s%sbase.inc.php',
+    dirname(__FILE__),
+    DIRECTORY_SEPARATOR
+);
 /**
  * Initial body information.
  */
@@ -36,7 +40,9 @@ $body = SimpleCMS::tag(
  *
  * To think about, however, is a simpler means to include tags maybe.
  */
-echo SimpleCMS::tag(
-    'html',
-    $body
+echo SimpleCMS::sanitizeItems(
+    SimpleCMS::tag(
+        'html',
+        $body
+    )
 );

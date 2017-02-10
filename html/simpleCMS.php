@@ -410,14 +410,20 @@ class SimpleCMS
         /**
          * Just so we can limit potential syntactical errors.
          */
-        if (!(isset($_POST['title']) && is_string($_POST['title']))) {
+        if (!(isset($_POST['title'])
+            && is_string($_POST['title']))
+        ) {
             $_POST['title'] = false;
         }
-        $title = $_POST['title'];
+        $title = SimpleCMS::sanitizeItems(
+            $_POST['title']
+        );
         if (!(isset($_POST['bodytext']) && is_string($_POST['bodytext']))) {
             $_POST['bodytext'] = false;
         }
-        $bodytext = $_POST['bodytext'];
+        $bodytext = SimpleCMS::sanitizeItems(
+            $_POST['bodytext']
+        );
         /**
          * Initialize these for our prepares
          */

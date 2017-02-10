@@ -7,9 +7,9 @@
  *
  * PHP version 5
  *
- * category base.inc.php
- * package  SimpleCMS
- * author   THEMCV <nah@nah.com>
+ * @category base.inc.php
+ * @package  SimpleCMS
+ * @author   THEMCV <nah@nah.com>
  * @license linktolicense Simplenameforlicense
  * @link    https://github.com/themcv/phpsite
  */
@@ -19,9 +19,9 @@
  * all of this information on all pages
  * we create.
  *
- * category base.inc.php
- * package  SimpleCMS
- * author   THEMCV <nah@nah.com>
+ * @category base.inc.php
+ * @package  SimpleCMS
+ * @author   THEMCV <nah@nah.com>
  * @license linktolicense Simplenameforlicense
  * @link    https://github.com/themcv/phpsite
  */

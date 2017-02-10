@@ -230,6 +230,14 @@ class SimpleCMS
                 $title
             );
             echo self::tag(
+                'h6',
+                sprintf(
+                    '%s: %s',
+                    _('Date Created'),
+                    $created
+                )
+            );
+            echo self::tag(
                 'p',
                 $bodytext
             );
@@ -433,6 +441,11 @@ class SimpleCMS
         if (count($vals) < 1) {
             return true;
         }
+        $created = date('Y-m-d H:i:s');
+        $vals['created'] = ':created';
+        $values['created'] = $created;
+        $vals['edited'] = ':edited';
+        $values['edited'] = $created;
         /**
          * Dynamic build up should use pre-formatted text.
          * This way you only insert what and where necessary.
@@ -472,7 +485,7 @@ class SimpleCMS
         $test = self::_prepare(
             sprintf(
                 $query,
-                self::DB_NAME
+                DB_NAME
             )
         );
         if (false === $test) {
@@ -486,6 +499,7 @@ class SimpleCMS
             . '`title` VARCHAR(150) NOT NULL,'
             . '`bodytext` LONGTEXT NOT NULL,'
             . '`created` DATETIME NOT NULL,'
+            . '`edited` DATETIME NOT NULL,'
             . 'PRIMARY KEY (`id`),'
             . 'UNIQUE INDEX `title` (`title`)'
             . ') ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 '

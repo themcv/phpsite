@@ -353,7 +353,7 @@ class SimpleCMS
      *
      * @return string
      */
-    public static function tag($tag, $string, $attributes = array())
+    public static function tag($tag, $string = '', $attributes = array())
     {
         $tag = strtolower($tag);
         $atts = array();
@@ -369,8 +369,49 @@ class SimpleCMS
             );
             unset($val);
         }
-        $htmltag = sprintf(
-            '<%s%s>%s</%s>',
+        $voidelements = array(
+            'area',
+            'base',
+            'basefont',
+            'bgsound',
+            'br',
+            'col',
+            'command',
+            'embed',
+            'frame',
+            'hr',
+            'image',
+            'img',
+            'input',
+            'isindex',
+            'keygen',
+            'link',
+            'menuitem',
+            'meta',
+            'nextid',
+            'param',
+            'source',
+            'track',
+            'wbr'
+        );
+        if (!in_array($tag, $voidelements)) {
+            return sprintf(
+                '<%s%s>%s</%s>',
+                $tag,
+                (
+                    count($atts) ?
+                    sprintf(
+                        ' %s',
+                        implode(' ', $atts)
+                    ) :
+                    ''
+                ),
+                $string,
+                $tag
+            );
+        }
+        return sprintf(
+            '<%s%s/>',
             $tag,
             (
                 count($atts) ?
@@ -379,11 +420,8 @@ class SimpleCMS
                     implode(' ', $atts)
                 ) :
                 ''
-            ),
-            $string,
-            $tag
+            )
         );
-        return $htmltag;
     }
     /**
      * Sanitizes the data for us.
